@@ -1,0 +1,18 @@
+[
+  {
+    "dimension": 4,
+    "n_physical": 2,
+    "physical_hilbert_dimension": 4,
+    "fill_ratio": 1.0,
+    "delay_dt": 0,
+    "dt_ns": 0.0,
+    "backend_name": "ibm_fez",
+    "fidelity": 0.8709238082262497,
+    "leakage": 0.0,
+    "in_subspace_fidelity": 0.870923808226249,
+    "shots": 256,
+    "state_family": "haar",
+    "correction_mode": "dynamic",
+    "simulation_lane": "ibm_runtime"
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "dimension": 3,
+  "n_physical": 2,
+  "metric": "process_fidelity",
+  "fit_mode": "first_nonzero",
+  "source_backend_name": "ibm_fez",
+  "source_simulation_lane": "ibm_runtime_process_tomography",
+  "baseline_metric_value": 0.7420897678611658,
+  "calibration_floor": 0.1111111111111111,
+  "baseline_dt_ns": 0.0,
+  "effective_t2_ns": 2008.5842858433755,
+  "effective_t2_ns_ci_low": 1089.6231329874643,
+  "effective_t2_ns_ci_high": 15373.067297419251,
+  "selected_points": [
+    {
+      "delay_dt": 64,
+      "delay_ns": 256.0,
+      "metric_value": 0.6665836004869312,
+      "normalized_decay_ratio": 0.8803348313504932,
+      "normalized_decay_ratio_ci_low": 0.7906154256640576,
+      "normalized_decay_ratio_ci_high": 0.983485386635386
+    }
+  ],
+  "dt_ns_per_step": 4.0,
+  "correlation_time_ns": 2008.5842858433755,
+  "correlation_time_ns_ci_low": 1089.6231329874643,
+  "correlation_time_ns_ci_high": 15373.067297419251,
+  "switching_probability": 0.001989470775992208,
+  "switching_probability_ci_low": 0.0002601614614140546,
+  "switching_probability_ci_high": 0.0036642641542631305,
+  "calibration_assumption": "tau_corr := fitted effective T2 from delay data",
+  "calibration_formula": "p_switch = 1 - exp(-dt_step / tau_corr)"
+}

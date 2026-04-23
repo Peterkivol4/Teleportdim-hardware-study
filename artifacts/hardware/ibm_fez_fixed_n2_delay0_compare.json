@@ -1,0 +1,28 @@
+[
+  {
+    "n_physical": 2,
+    "delay_dt": 0,
+    "dt_ns": 0.0,
+    "source_simulation_lanes": "ibm_runtime",
+    "contains_theory_baseline": false,
+    "contains_explicit_theory_mixing": false,
+    "d2|fill_ratio": 0.5,
+    "d2|metric|fidelity": 0.9153260710547272,
+    "d2|metric|leakage": 0.0569715977862183,
+    "d2|metric|in_subspace_fidelity": 0.970624075484871,
+    "d3|fill_ratio": 0.75,
+    "d3|metric|fidelity": 0.8509918257953751,
+    "d3|metric|leakage": 0.023813367037580635,
+    "d3|metric|in_subspace_fidelity": 0.871751156039581,
+    "d4|fill_ratio": 1.0,
+    "d4|metric|fidelity": 0.8709238082262497,
+    "d4|metric|leakage": 0.0,
+    "d4|metric|in_subspace_fidelity": 0.870923808226249,
+    "delta|d4-d2|metric|fidelity": -0.04440226282847748,
+    "delta|d4-d2|metric|leakage": -0.0569715977862183,
+    "delta|d4-d2|metric|in_subspace_fidelity": -0.09970026725862191,
+    "delta|d4-d3|metric|fidelity": 0.019931982430874573,
+    "delta|d4-d3|metric|leakage": -0.023813367037580635,
+    "delta|d4-d3|metric|in_subspace_fidelity": -0.0008273478133319356
+  }
+]

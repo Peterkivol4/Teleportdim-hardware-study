@@ -1,0 +1,2 @@
+dimension,n_physical,physical_hilbert_dimension,fill_ratio,delay_dt,dt_ns,backend_name,fidelity,leakage,in_subspace_fidelity,shots,state_family,correction_mode,simulation_lane
+3,2,4,0.75,0,0.0,ibm_fez,0.8509918257953751,0.023813367037580635,0.871751156039581,256,haar,dynamic,ibm_runtime
