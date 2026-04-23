@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "teleportdim"
+version = "0.3.1"
+description = "IBM-compatible encoded-dimension quantum teleportation experiments"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{name = "Hirresh Sundra"}]
+dependencies = [
+  "numpy>=1.26",
+  "typer>=0.12",
+  "matplotlib>=3.8"
+]
+
+[project.optional-dependencies]
+aer = [
+  "qiskit[all]~=2.3.1",
+  "qiskit-aer~=0.17"
+]
+ibm = [
+  "qiskit[all]~=2.3.1",
+  "qiskit-ibm-runtime~=0.45.1"
+]
+full = [
+  "qiskit[all]~=2.3.1",
+  "qiskit-aer~=0.17",
+  "qiskit-ibm-runtime~=0.45.1"
+]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.5"
+]
+
+[project.scripts]
+teleportdim = "teleportdim:app"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+teleportdim = ["py.typed"]

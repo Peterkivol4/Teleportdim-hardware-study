@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.DS_Store
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+.coverage
+htmlcov/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+artifacts/**/*.png
