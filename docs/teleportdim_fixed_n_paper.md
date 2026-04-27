@@ -4,7 +4,7 @@
 **Author:** Hirresh Sundra  
 **Project:** TeleportDim v0.3.1  
 **Format:** Thesis-style research manuscript / arXiv-ready draft  
-**Primary repository artifact:** `src/teleportdim/__init__.py`  
+**Primary repository artifact:** `src/teleportdim/`  
 
 ## Abstract
 
@@ -369,19 +369,19 @@ For each fixed-\(d\), fixed-delay record, the pipeline computes an “observed�
 
 The repository exports PNG, JSON, CSV, and Markdown artifacts for every major sweep. This manuscript uses the saved figures directly as figure artifacts and the saved JSON/Markdown summaries as the authoritative numerical record.
 
-![Figure 1](../artifacts/fixed_n2/markovian_n2_leakage.png)
+![Figure 1](../results/fixed_n2/markovian_n2_leakage.png)
 
 **Figure 1.** Theory-lane leakage versus delay for the fixed-\(n=2\) Markovian baseline. The effective model produces leakage for \(d<2^n\) only because an explicit depolarizing/codespace-mixing term is added; the \(d=4\) curve is structurally pinned to zero because no leakage subspace exists.
 
-![Figure 2](../artifacts/fixed_n2/aer_fixed_n2_fidelity.png)
+![Figure 2](../results/fixed_n2/aer_fixed_n2_fidelity.png)
 
 **Figure 2.** Aer circuit-lane fidelity versus delay for \(d=2,3,4\) at fixed \(n=2\). The circuit-faithful lane shows a clear and monotone dimension ordering \(d=2 > d=3 > d=4\) across the full \(0\)–\(8192\) dt grid.
 
-![Figure 3](../artifacts/hardware/ibm_fez_fixed_n2_delay0_64_128_live_fidelity.png)
+![Figure 3](../results/hardware/ibm_fez_fixed_n2_delay0_64_128_live_fidelity.png)
 
 **Figure 3.** Live hardware state-fidelity sweep on `ibm_fez` for fixed \(n=2\), delays \(0,64,128\) dt. The short hardware grid is visibly noisier than the Aer grid because the experiment uses only \(256\) shots per circuit and only three delay points.
 
-![Figure 4](../artifacts/non_markovian/random_telegraph_blp_n2_blp.png)
+![Figure 4](../results/non_markovian/random_telegraph_blp_n2_blp.png)
 
 **Figure 4.** Random-telegraph BLP scan at fixed \(n=2\). For all \(d \in \{2,3,4\}\), the BLP measure decreases monotonically with switching probability, as expected for progressively shorter correlation time.
 
@@ -389,13 +389,13 @@ The repository exports PNG, JSON, CSV, and Markdown artifacts for every major sw
 
 ### A. Software Stack
 
-The repository is implemented in Python and distributed as the `teleportdim` package [Listing 1]. The package metadata requires Python \(\ge 3.11\), while the validated environment used for the final repository pass employed Python 3.13 and the package versions archived in `requirements-lock.txt`: Qiskit 2.3.0, Qiskit Aer 0.17.2, Qiskit IBM Runtime 0.46.1, NumPy 2.3.5, Matplotlib 3.10.6, and PyTest 8.4.2 [33]–[35]. A final repository validation executed the complete test suite with result `69 passed, 1 skipped`, establishing that the draft is paired with a functioning and reproducible codebase.
+The repository is implemented in Python and distributed as the `teleportdim` package [Listing 1]. The package metadata requires Python \(\ge 3.10\), while the validated environment used for the final repository pass employed Python 3.13 and the package versions archived in `requirements-lock.txt`: Qiskit 2.3.0, Qiskit Aer 0.17.2, Qiskit IBM Runtime 0.46.1, NumPy 2.3.5, Matplotlib 3.10.6, and PyTest 8.4.2 [33]–[35]. A final repository validation executed the complete test suite with result `82 passed, 1 skipped` and 85% coverage, establishing that the draft is paired with a functioning and reproducible codebase.
 
-Although the current build is monolithic, conceptual module boundaries are preserved internally as `config`, `encoding`, `states`, `metrics`, `process`, `statistics`, `simulation`, `tomography`, `circuits`, `hardware`, `aer`, `reports`, `sweeps`, and `cli`. That structure is sufficient for code citation even before physical file extraction.
+The implementation is physically split according to the protocol boundaries used throughout the manuscript: `config`, `encoding`, `states`, `metrics`, `postprocess`, `tomography`, `process`, `statistics`, `simulation`, `circuits`, `hardware`, `aer`, `reports`, `sweeps`, and `cli`. The package root re-exports the stable public API for backwards compatibility.
 
 ### B. Listing 1: Metric Conversion
 
-**Listing 1.** `average_gate_fidelity_from_process_fidelity()` in `src/teleportdim/__init__.py`, lines 404–412. This function implements Eq. (18) exactly.
+**Listing 1.** `average_gate_fidelity_from_process_fidelity()` in `src/teleportdim/metrics.py`, lines 154–162. This function implements Eq. (18) exactly.
 
 ```python
 def average_gate_fidelity_from_process_fidelity(process_fidelity: float, dimension: int) -> float:
@@ -665,7 +665,7 @@ Table 1 consolidates the lane structure and the dominant result.
 
 The most important empirical fact is that the fully occupied encoding \(d=4\), \(\phi=1\) has zero leakage but the *worst* process fidelity on both Aer and hardware. That observation immediately rules out leakage as the sole explanation for logical failure.
 
-The repository also exports a merged three-lane significance summary. Table 2 reproduces the highest-level result from `artifacts/fixed_n2/three_lane_n2_compare.md`.
+The repository also exports a merged three-lane significance summary. Table 2 reproduces the highest-level result from `results/fixed_n2/three_lane_n2_compare.md`.
 
 **Table 2.** Repository-wide three-lane significance summary for fixed \(n=2\).
 
@@ -681,7 +681,7 @@ In the combined report, the hardware state-fidelity significance count is taken 
 
 The theory lane provides a controlled monotone baseline. For \(d=2\), fidelity decreases from \(1.000000\) at zero delay to \(0.960711\) at \(8192\) dt, while leakage rises from \(0.000000\) to \(0.014984\) [Table 3]. For \(d=3\), fidelity decreases from \(1.000000\) to \(0.955223\), with leakage increasing from \(0.000000\) to \(0.009769\) [Table 3]. For \(d=4\), fidelity decreases from \(1.000000\) to \(0.953138\), while leakage remains exactly zero by Lemma 1 [Table 3].
 
-**Table 3.** Theory-lane raw state-fidelity and leakage values for fixed \(n=2\) [artifact: `artifacts/fixed_n2/n2_compare.md` and `artifacts/fixed_n2/markovian_n2.json`].
+**Table 3.** Theory-lane raw state-fidelity and leakage values for fixed \(n=2\) [artifact: `results/fixed_n2/n2_compare.md` and `results/fixed_n2/markovian_n2.json`].
 
 | delay (dt) | delay (ns) | \(F_{d=2}\) | \(L_{d=2}\) | \(F_{d=3}\) | \(L_{d=3}\) | \(F_{d=4}\) | \(L_{d=4}\) |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -703,7 +703,7 @@ Hence the effective embedded-state baseline does not support a claim that \(\phi
 
 The Aer lane is the primary local benchmark because it executes the actual teleportation circuit and its tomography stack. Table 4 summarizes the fixed-\(n\) comparison.
 
-**Table 4.** Consolidated Aer fixed-\(n\) comparison for \(n=2\) [artifact: `artifacts/fixed_n2/aer_n2_compare.md`].
+**Table 4.** Consolidated Aer fixed-\(n\) comparison for \(n=2\) [artifact: `results/fixed_n2/aer_n2_compare.md`].
 
 | delay (dt) | \(F_{d=2}\) | \(F_{d=3}\) | \(F_{d=4}\) | \(\Delta F_{4-3}\) | \(F_{\mathrm{proc},d=3}\) | \(F_{\mathrm{proc},d=4}\) |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -735,7 +735,7 @@ in channel quality at fixed \(n=2\).
 
 The live hardware state-tomography sweep averages over the canonical probe ensembles \(|\mathcal{P}_{\mathrm{can}}(d)|=d+1\). Table 5 reports the key values.
 
-**Table 5.** Live fixed-\(n\) hardware state-tomography results on `ibm_fez` [artifact: `artifacts/hardware/ibm_fez_fixed_n2_delay0_64_128_compare.md`].
+**Table 5.** Live fixed-\(n\) hardware state-tomography results on `ibm_fez` [artifact: `results/hardware/ibm_fez_fixed_n2_delay0_64_128_compare.md`].
 
 | delay (dt) | \(F_{d=2}\) | \(L_{d=2}\) | \(F_{d=3}\) | \(L_{d=3}\) | \(F_{d=4}\) | \(L_{d=4}\) |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -759,7 +759,7 @@ The more stable observation in Table 5 is leakage. Both partially filled codespa
 
 Channel-level comparison on hardware is the manuscript’s highest-value experimental result. Table 6 reports the live process-tomography metrics, reconstructed from \(d^2\) logical probe states per dimension.
 
-**Table 6.** Live fixed-\(n\) hardware process-tomography results on `ibm_fez` [artifact: `artifacts/hardware/ibm_fez_process_fixed_n2_delay0_64_128_compare.md`].
+**Table 6.** Live fixed-\(n\) hardware process-tomography results on `ibm_fez` [artifact: `results/hardware/ibm_fez_process_fixed_n2_delay0_64_128_compare.md`].
 
 | delay (dt) | \(F_{\mathrm{proc},d=2}\) | \(F_{\mathrm{proc},d=3}\) | \(F_{\mathrm{proc},d=4}\) | \(F_{\mathrm{avg},d=2}\) | \(F_{\mathrm{avg},d=3}\) | \(F_{\mathrm{avg},d=4}\) |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -793,7 +793,7 @@ $$
 \tag{27}
 $$
 
-**Table 7.** Hardware-versus-Aer qutrit process cross-check on the matched short delay grid [artifact: `artifacts/hardware/ibm_fez_vs_aer_process_d3_n2_compare.md`].
+**Table 7.** Hardware-versus-Aer qutrit process cross-check on the matched short delay grid [artifact: `results/hardware/ibm_fez_vs_aer_process_d3_n2_compare.md`].
 
 | delay (dt) | delay (ns) | Hardware \(F_{\mathrm{proc}}\) | Aer \(F_{\mathrm{proc}}\) | delta | CI relation |
 | ---: | ---: | ---: | ---: | ---: | --- |
@@ -1048,7 +1048,7 @@ teleportdim hardware-fixed-n-sweep \
   --shots 256 \
   --delays 0,64,128 \
   --bootstrap-samples 100 \
-  --output-stem artifacts/hardware/ibm_fez_fixed_n2_delay0_64_128_live
+  --output-stem results/hardware/ibm_fez_fixed_n2_delay0_64_128_live
 
 teleportdim hardware-process-tomography \
   --dimension 3 \
@@ -1058,7 +1058,7 @@ teleportdim hardware-process-tomography \
   --delays 0,64,128 \
   --bootstrap-samples 100 \
   --confidence-level 0.95 \
-  --output-stem artifacts/hardware/ibm_fez_process_d3_n2_delay0_64_128
+  --output-stem results/hardware/ibm_fez_process_d3_n2_delay0_64_128
 ```
 
 ## Appendix C. Environment Archive
@@ -1105,17 +1105,31 @@ The package metadata is stored in `pyproject.toml`. The exact environment used f
 
 ## Appendix E. Complete Source Pointer
 
-The complete monolithic implementation used in this work is archived in:
+The complete implementation used in this work is split across:
 
-- `src/teleportdim/__init__.py`
+- `src/teleportdim/config.py`
+- `src/teleportdim/encoding.py`
+- `src/teleportdim/states.py`
+- `src/teleportdim/metrics.py`
+- `src/teleportdim/postprocess.py`
+- `src/teleportdim/tomography.py`
+- `src/teleportdim/process.py`
+- `src/teleportdim/statistics.py`
+- `src/teleportdim/simulation.py`
+- `src/teleportdim/circuits.py`
+- `src/teleportdim/hardware.py`
+- `src/teleportdim/aer.py`
+- `src/teleportdim/reports.py`
+- `src/teleportdim/sweeps.py`
+- `src/teleportdim/cli.py`
 
 and the principal saved result artifacts cited in the manuscript are:
 
-- `artifacts/fixed_n2/n2_compare.{json,csv,md}`
-- `artifacts/fixed_n2/aer_n2_compare.{json,csv,md}`
-- `artifacts/fixed_n2/three_lane_n2_compare.{json,csv,md}`
-- `artifacts/hardware/ibm_fez_fixed_n2_delay0_64_128_compare.{json,csv,md}`
-- `artifacts/hardware/ibm_fez_process_fixed_n2_delay0_64_128_compare.{json,csv,md}`
-- `artifacts/hardware/ibm_fez_vs_aer_process_d3_n2_compare.{json,md}`
-- `artifacts/non_markovian/random_telegraph_blp_n2.{json,csv,md}`
-- `artifacts/non_markovian/ibm_fez_rtn_calibration_d3_n2.{json,md}`
+- `results/fixed_n2/n2_compare.{json,csv,md}`
+- `results/fixed_n2/aer_n2_compare.{json,csv,md}`
+- `results/fixed_n2/three_lane_n2_compare.{json,csv,md}`
+- `results/hardware/ibm_fez_fixed_n2_delay0_64_128_compare.{json,csv,md}`
+- `results/hardware/ibm_fez_process_fixed_n2_delay0_64_128_compare.{json,csv,md}`
+- `results/hardware/ibm_fez_vs_aer_process_d3_n2_compare.{json,md}`
+- `results/non_markovian/random_telegraph_blp_n2.{json,csv,md}`
+- `results/non_markovian/ibm_fez_rtn_calibration_d3_n2.{json,md}`

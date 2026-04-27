@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="title desc">
+  <title id="title">TeleportDim fixed-n summary panel</title>
+  <desc id="desc">Two-panel process-fidelity comparison for fixed n equals 2. The left panel shows the Aer circuit lane, where d equals 3 stays above d equals 4 across delays 0, 455, 910, and 1820 nanoseconds. The right panel shows the IBM Fez hardware lane, where d equals 3 also stays above d equals 4 across delays 0, 256, and 512 nanoseconds. The footer notes that zero structural leakage at full occupancy does not imply the best logical teleportation channel.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f7f6f2; }
+      .panel { fill: #fffdfa; stroke: #d9d2c7; stroke-width: 1.2; }
+      .grid { stroke: #d8d4cd; stroke-width: 1; stroke-dasharray: 4 6; }
+      .axis { stroke: #5c5851; stroke-width: 1.4; }
+      .aer3 { fill: none; stroke: #0b7d77; stroke-width: 3.2; }
+      .aer4 { fill: none; stroke: #d66b3d; stroke-width: 3.2; }
+      .dot3 { fill: #0b7d77; }
+      .dot4 { fill: #d66b3d; }
+      .text { fill: #2a2825; font-family: Arial, Helvetica, sans-serif; }
+      .title { font-size: 24px; font-weight: 700; }
+      .subtitle { font-size: 13px; }
+      .paneltitle { font-size: 16px; font-weight: 700; }
+      .label { font-size: 12px; }
+      .small { font-size: 11px; }
+      .footerbox { fill: #efe7da; stroke: #d5c5aa; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="960" height="440" rx="18"/>
+
+  <text class="text title" x="40" y="42">Fixed-n summary: d = 3 beats d = 4 in both Aer and hardware</text>
+  <text class="text subtitle" x="40" y="66">Metric shown: logical process fidelity at fixed n = 2. Sources: results/fixed_n2/three_lane_n2_compare.md and results/hardware/ibm_fez_vs_aer_process_d3_n2_compare.md</text>
+
+  <circle class="dot3" cx="42" cy="96" r="6"/>
+  <text class="text label" x="56" y="100">d = 3</text>
+  <circle class="dot4" cx="118" cy="96" r="6"/>
+  <text class="text label" x="132" y="100">d = 4</text>
+
+  <rect class="panel" x="40" y="120" width="410" height="210" rx="12"/>
+  <text class="text paneltitle" x="60" y="148">Aer circuit lane</text>
+  <text class="text small" x="60" y="166">Delays: 0, 2048, 4096, 8192 dt mapped to 0, 455, 910, 1820 ns</text>
+
+  <line class="grid" x1="70" y1="230" x2="390" y2="230"/>
+  <line class="grid" x1="70" y1="190" x2="390" y2="190"/>
+  <line class="grid" x1="70" y1="150" x2="390" y2="150"/>
+  <line class="grid" x1="70" y1="110" x2="390" y2="110"/>
+  <line class="grid" x1="70" y1="70" x2="390" y2="70"/>
+  <line class="axis" x1="70" y1="230" x2="390" y2="230"/>
+  <line class="axis" x1="70" y1="230" x2="70" y2="70"/>
+
+  <text class="text small" x="36" y="234">0.82</text>
+  <text class="text small" x="36" y="194">0.85</text>
+  <text class="text small" x="36" y="154">0.88</text>
+  <text class="text small" x="36" y="114">0.91</text>
+  <text class="text small" x="36" y="74">0.93</text>
+
+  <text class="text small" x="62" y="250">0</text>
+  <text class="text small" x="140" y="250">455</text>
+  <text class="text small" x="220" y="250">910</text>
+  <text class="text small" x="376" y="250">1820 ns</text>
+
+  <polyline class="aer3" points="70,95 150,108 230,122 390,146"/>
+  <polyline class="aer4" points="70,155 150,170 230,186 390,216"/>
+  <circle class="dot3" cx="70" cy="95" r="4.5"/>
+  <circle class="dot3" cx="150" cy="108" r="4.5"/>
+  <circle class="dot3" cx="230" cy="122" r="4.5"/>
+  <circle class="dot3" cx="390" cy="146" r="4.5"/>
+  <circle class="dot4" cx="70" cy="155" r="4.5"/>
+  <circle class="dot4" cx="150" cy="170" r="4.5"/>
+  <circle class="dot4" cx="230" cy="186" r="4.5"/>
+  <circle class="dot4" cx="390" cy="216" r="4.5"/>
+
+  <text class="text small" x="318" y="136">d = 3: 0.913 to 0.878</text>
+  <text class="text small" x="305" y="208">d = 4: 0.872 to 0.830</text>
+  <text class="text small" x="178" y="274">Delay (ns)</text>
+  <text class="text small" transform="translate(18 205) rotate(-90)">Process fidelity</text>
+
+  <rect class="panel" x="500" y="120" width="410" height="210" rx="12"/>
+  <text class="text paneltitle" x="520" y="148">IBM Fez hardware lane</text>
+  <text class="text small" x="520" y="166">Delays: 0, 64, 128 dt mapped to 0, 256, 512 ns</text>
+
+  <line class="grid" x1="530" y1="230" x2="850" y2="230"/>
+  <line class="grid" x1="530" y1="190" x2="850" y2="190"/>
+  <line class="grid" x1="530" y1="150" x2="850" y2="150"/>
+  <line class="grid" x1="530" y1="110" x2="850" y2="110"/>
+  <line class="grid" x1="530" y1="70" x2="850" y2="70"/>
+  <line class="axis" x1="530" y1="230" x2="850" y2="230"/>
+  <line class="axis" x1="530" y1="230" x2="530" y2="70"/>
+
+  <text class="text small" x="495" y="234">0.45</text>
+  <text class="text small" x="495" y="194">0.53</text>
+  <text class="text small" x="495" y="154">0.61</text>
+  <text class="text small" x="495" y="114">0.70</text>
+  <text class="text small" x="495" y="74">0.78</text>
+
+  <text class="text small" x="522" y="250">0</text>
+  <text class="text small" x="640" y="250">256</text>
+  <text class="text small" x="798" y="250">512 ns</text>
+
+  <polyline class="aer3" points="530,88 690,125 850,112"/>
+  <polyline class="aer4" points="530,144 690,209 850,203"/>
+  <circle class="dot3" cx="530" cy="88" r="4.5"/>
+  <circle class="dot3" cx="690" cy="125" r="4.5"/>
+  <circle class="dot3" cx="850" cy="112" r="4.5"/>
+  <circle class="dot4" cx="530" cy="144" r="4.5"/>
+  <circle class="dot4" cx="690" cy="209" r="4.5"/>
+  <circle class="dot4" cx="850" cy="203" r="4.5"/>
+
+  <text class="text small" x="722" y="101">d = 3: 0.742 to 0.693</text>
+  <text class="text small" x="720" y="194">d = 4: 0.628 to 0.505</text>
+  <text class="text small" x="638" y="274">Delay (ns)</text>
+  <text class="text small" transform="translate(478 205) rotate(-90)">Process fidelity</text>
+
+  <rect class="footerbox" x="40" y="352" width="870" height="56" rx="10"/>
+  <text class="text label" x="60" y="385">Interpretation: both execution lanes keep d = 4 below d = 3 in channel quality, so zero structural leakage at full occupancy does not guarantee the best logical teleportation channel.</text>
+</svg>
