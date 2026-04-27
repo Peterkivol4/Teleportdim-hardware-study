@@ -1,0 +1,229 @@
+{
+  "metadata_manifest_date": "2026-04-24",
+  "backend": "ibm_fez",
+  "device_topology": {
+    "processor_family": "IBM Heron r2",
+    "num_physical_qubits": 156,
+    "coupling_map_or_selected_qubits": "not archived in the original saved result records"
+  },
+  "calibration_snapshot": {
+    "ibm_calibration_date": null,
+    "status": "not archived in the original saved result records; capture backend.properties()/target calibration data during the next live run"
+  },
+  "hardware_result_files": [
+    {
+      "file": "results/hardware/ibm_fez_d2_n2_delay0.json",
+      "record_count": 1,
+      "backend_names": [
+        "ibm_fez"
+      ],
+      "dimensions": [
+        2
+      ],
+      "delay_dt_values": [
+        0
+      ],
+      "shot_counts": [
+        256
+      ],
+      "bootstrap_samples": [],
+      "simulation_lanes": [
+        "ibm_runtime"
+      ]
+    },
+    {
+      "file": "results/hardware/ibm_fez_d3_n2_delay0.json",
+      "record_count": 1,
+      "backend_names": [
+        "ibm_fez"
+      ],
+      "dimensions": [
+        3
+      ],
+      "delay_dt_values": [
+        0
+      ],
+      "shot_counts": [
+        256
+      ],
+      "bootstrap_samples": [],
+      "simulation_lanes": [
+        "ibm_runtime"
+      ]
+    },
+    {
+      "file": "results/hardware/ibm_fez_d4_n2_delay0.json",
+      "record_count": 1,
+      "backend_names": [
+        "ibm_fez"
+      ],
+      "dimensions": [
+        4
+      ],
+      "delay_dt_values": [
+        0
+      ],
+      "shot_counts": [
+        256
+      ],
+      "bootstrap_samples": [],
+      "simulation_lanes": [
+        "ibm_runtime"
+      ]
+    },
+    {
+      "file": "results/hardware/ibm_fez_fixed_n2_delay0_64_128_compare.json",
+      "record_count": 3,
+      "backend_names": [],
+      "dimensions": [],
+      "delay_dt_values": [
+        0,
+        64,
+        128
+      ],
+      "shot_counts": [],
+      "bootstrap_samples": [],
+      "simulation_lanes": []
+    },
+    {
+      "file": "results/hardware/ibm_fez_fixed_n2_delay0_64_128_live.json",
+      "record_count": 9,
+      "backend_names": [
+        "ibm_fez"
+      ],
+      "dimensions": [
+        2,
+        3,
+        4
+      ],
+      "delay_dt_values": [
+        0,
+        64,
+        128
+      ],
+      "shot_counts": [
+        256
+      ],
+      "bootstrap_samples": [
+        100
+      ],
+      "simulation_lanes": [
+        "ibm_runtime"
+      ]
+    },
+    {
+      "file": "results/hardware/ibm_fez_fixed_n2_delay0_compare.json",
+      "record_count": 1,
+      "backend_names": [],
+      "dimensions": [],
+      "delay_dt_values": [
+        0
+      ],
+      "shot_counts": [],
+      "bootstrap_samples": [],
+      "simulation_lanes": []
+    },
+    {
+      "file": "results/hardware/ibm_fez_process_d2_n2_delay0_64_128.json",
+      "record_count": 3,
+      "backend_names": [
+        "ibm_fez"
+      ],
+      "dimensions": [
+        2
+      ],
+      "delay_dt_values": [
+        0,
+        64,
+        128
+      ],
+      "shot_counts": [
+        256
+      ],
+      "bootstrap_samples": [
+        100
+      ],
+      "simulation_lanes": [
+        "ibm_runtime_process_tomography"
+      ]
+    },
+    {
+      "file": "results/hardware/ibm_fez_process_d3_n2_delay0_64_128.json",
+      "record_count": 3,
+      "backend_names": [
+        "ibm_fez"
+      ],
+      "dimensions": [
+        3
+      ],
+      "delay_dt_values": [
+        0,
+        64,
+        128
+      ],
+      "shot_counts": [
+        256
+      ],
+      "bootstrap_samples": [
+        100
+      ],
+      "simulation_lanes": [
+        "ibm_runtime_process_tomography"
+      ]
+    },
+    {
+      "file": "results/hardware/ibm_fez_process_d4_n2_delay0_64_128.json",
+      "record_count": 3,
+      "backend_names": [
+        "ibm_fez"
+      ],
+      "dimensions": [
+        4
+      ],
+      "delay_dt_values": [
+        0,
+        64,
+        128
+      ],
+      "shot_counts": [
+        256
+      ],
+      "bootstrap_samples": [
+        100
+      ],
+      "simulation_lanes": [
+        "ibm_runtime_process_tomography"
+      ]
+    },
+    {
+      "file": "results/hardware/ibm_fez_process_fixed_n2_delay0_64_128_compare.json",
+      "record_count": 3,
+      "backend_names": [],
+      "dimensions": [],
+      "delay_dt_values": [
+        0,
+        64,
+        128
+      ],
+      "shot_counts": [],
+      "bootstrap_samples": [],
+      "simulation_lanes": []
+    },
+    {
+      "file": "results/hardware/ibm_fez_vs_aer_process_d3_n2_compare.json",
+      "record_count": 3,
+      "backend_names": [],
+      "dimensions": [
+        3
+      ],
+      "delay_dt_values": [
+        0,
+        64,
+        128
+      ],
+      "shot_counts": [],
+      "bootstrap_samples": [],
+      "simulation_lanes": []
+    }
+  ]
+}
