@@ -12,7 +12,7 @@ from teleportdim.reports import (
 from teleportdim.sweeps import fixed_n_sweep_configs, run_markovian_fixed_n_sweep
 
 
-OUT = Path('artifacts/fixed_n2')
+OUT = Path('results/fixed_n2')
 OUT.mkdir(parents=True, exist_ok=True)
 
 configs = fixed_n_sweep_configs([2], delay_dt_values=[0, 32, 64, 128], state_family='haar', random_seed=7)

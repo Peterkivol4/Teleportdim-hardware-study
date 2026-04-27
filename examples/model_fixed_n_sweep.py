@@ -10,7 +10,7 @@ def main() -> None:
     configs = fixed_n_sweep_configs([1, 2, 3], delay_dt_values=[0, 32, 64, 128], state_family="fourier")
     records = run_markovian_fixed_n_sweep(configs, t1=120.0, t2=80.0, t_dep=160.0)
 
-    out_dir = Path('artifacts')
+    out_dir = Path('results')
     out_dir.mkdir(exist_ok=True)
     save_json(records, out_dir / 'markovian_fixed_n.json')
     save_csv(records, out_dir / 'markovian_fixed_n.csv')

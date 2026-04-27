@@ -12,6 +12,7 @@ from teleportdim.process import (
 )
 from teleportdim.statistics import (
     bootstrap_average_tomography_metrics,
+    bootstrap_confidence_interval_from_samples,
     bootstrap_process_tomography_metrics,
     bootstrap_tomography_metrics,
 )
@@ -19,13 +20,13 @@ from teleportdim import BackendConfig, SweepConfig, build_basic_noise_model
 from teleportdim.aer import run_aer_process_tomography
 
 
-def test_process_tomography_probe_state_count_is_dimension_squared():
+def test_process_tomography_probe_state_count_is_dimension_squared() -> None:
     probes = process_tomography_probe_states(3)
     assert len(probes) == 9
     assert all(np.isclose(np.linalg.norm(state), 1.0) for state in probes)
 
 
-def test_reconstruct_superoperator_identity_has_unit_process_fidelity():
+def test_reconstruct_superoperator_identity_has_unit_process_fidelity() -> None:
     probes = process_tomography_probe_states(3)
     densities = [pure_state_density(state) for state in probes]
     superoperator = reconstruct_superoperator(densities, densities)
@@ -34,7 +35,7 @@ def test_reconstruct_superoperator_identity_has_unit_process_fidelity():
     assert np.isclose(process_fidelity_to_identity(superoperator, 3), 1.0, atol=1e-8)
 
 
-def test_choi_matrix_from_superoperator_identity_matches_maximally_entangled_projector():
+def test_choi_matrix_from_superoperator_identity_matches_maximally_entangled_projector() -> None:
     superoperator = np.eye(4, dtype=complex)
     choi = choi_matrix_from_superoperator(superoperator, 2)
     maximally_entangled = np.eye(2, dtype=complex).reshape(-1, order="F")
@@ -43,7 +44,7 @@ def test_choi_matrix_from_superoperator_identity_matches_maximally_entangled_pro
     assert np.isclose(np.trace(choi), 2.0)
 
 
-def test_reconstruct_superoperator_rejects_incomplete_probe_set():
+def test_reconstruct_superoperator_rejects_incomplete_probe_set() -> None:
     pytest = __import__("pytest")
     probes = process_tomography_probe_states(2)[:3]
     densities = [pure_state_density(state) for state in probes]
@@ -51,7 +52,7 @@ def test_reconstruct_superoperator_rejects_incomplete_probe_set():
         reconstruct_superoperator(densities, densities)
 
 
-def test_bootstrap_tomography_metrics_returns_confidence_interval_fields():
+def test_bootstrap_tomography_metrics_returns_confidence_interval_fields() -> None:
     logical_target = np.array([1.0, 1.0], dtype=complex) / np.sqrt(2.0)
     setting_counts = {
         "X": {"0": 256},
@@ -80,6 +81,16 @@ def test_bootstrap_tomography_metrics_returns_confidence_interval_fields():
     assert 0.0 <= summary["in_subspace_fidelity_ci_low"] <= summary["in_subspace_fidelity_ci_high"] <= 1.0
 
 
+def test_bootstrap_confidence_interval_from_synthetic_fidelity_samples_contains_true_mean() -> None:
+    rng = np.random.default_rng(1234)
+    true_mean = 0.8
+    samples = rng.normal(loc=true_mean, scale=0.02, size=10_000)
+    low, high = bootstrap_confidence_interval_from_samples(samples.tolist(), confidence_level=0.95)
+
+    assert low <= true_mean <= high
+    assert 0.0 <= low <= high <= 1.0
+
+
 def _single_qubit_setting_counts() -> list[dict[str, dict[str, int]]]:
     return [
         {"X": {"0": 64, "1": 64}, "Y": {"0": 64, "1": 64}, "Z": {"0": 128}},
@@ -89,7 +100,7 @@ def _single_qubit_setting_counts() -> list[dict[str, dict[str, int]]]:
     ]
 
 
-def test_bootstrap_average_tomography_metrics_returns_confidence_interval_fields():
+def test_bootstrap_average_tomography_metrics_returns_confidence_interval_fields() -> None:
     logical_targets = process_tomography_probe_states(2)
     summary = bootstrap_average_tomography_metrics(
         logical_targets,
@@ -113,7 +124,7 @@ def test_bootstrap_average_tomography_metrics_returns_confidence_interval_fields
     assert 0.0 <= summary["avg_probe_in_subspace_fidelity_ci_low"] <= summary["avg_probe_in_subspace_fidelity_ci_high"] <= 1.0
 
 
-def test_bootstrap_process_tomography_metrics_returns_confidence_interval_fields():
+def test_bootstrap_process_tomography_metrics_returns_confidence_interval_fields() -> None:
     logical_targets = process_tomography_probe_states(2)
     summary = bootstrap_process_tomography_metrics(
         2,
@@ -135,7 +146,7 @@ def test_bootstrap_process_tomography_metrics_returns_confidence_interval_fields
     assert 0.0 <= summary["average_gate_fidelity_ci_low"] <= summary["average_gate_fidelity_ci_high"] <= 1.0
 
 
-def test_run_aer_process_tomography_returns_high_process_fidelity_for_ideal_qubit_channel():
+def test_run_aer_process_tomography_returns_high_process_fidelity_for_ideal_qubit_channel() -> None:
     pytest = __import__("pytest")
     pytest.importorskip("qiskit")
     pytest.importorskip("qiskit_aer")
@@ -151,7 +162,7 @@ def test_run_aer_process_tomography_returns_high_process_fidelity_for_ideal_qubi
     assert record["average_gate_fidelity"] >= 0.9
 
 
-def test_run_aer_process_tomography_respects_explicit_fixed_n_embedding():
+def test_run_aer_process_tomography_respects_explicit_fixed_n_embedding() -> None:
     pytest = __import__("pytest")
     pytest.importorskip("qiskit")
     pytest.importorskip("qiskit_aer")
@@ -167,7 +178,7 @@ def test_run_aer_process_tomography_respects_explicit_fixed_n_embedding():
     assert record["fill_ratio"] == 0.5
 
 
-def test_run_aer_process_tomography_bootstrap_points_land_inside_reported_intervals():
+def test_run_aer_process_tomography_bootstrap_points_land_inside_reported_intervals() -> None:
     pytest = __import__("pytest")
     pytest.importorskip("qiskit")
     pytest.importorskip("qiskit_aer")
@@ -198,7 +209,7 @@ def test_run_aer_process_tomography_bootstrap_points_land_inside_reported_interv
     )
 
 
-def test_run_aer_process_tomography_process_fidelity_decreases_when_delay_relaxation_is_strong():
+def test_run_aer_process_tomography_process_fidelity_decreases_when_delay_relaxation_is_strong() -> None:
     pytest = __import__("pytest")
     pytest.importorskip("qiskit")
     pytest.importorskip("qiskit_aer")

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 import json
 from pathlib import Path
 
@@ -11,21 +12,21 @@ from teleportdim import app
 runner = CliRunner()
 
 
-def test_fixed_n_plan_cli_returns_expected_dimensions():
+def test_fixed_n_plan_cli_returns_expected_dimensions() -> None:
     result = runner.invoke(app, ["fixed-n-plan", "--n-values", "2", "--delays", "0,64"])
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
     assert [item["dimension"] for item in payload] == [2, 3, 4]
 
 
-def test_markovian_model_cli_returns_json():
+def test_markovian_model_cli_returns_json() -> None:
     result = runner.invoke(app, ["markovian-model", "--dimension", "3", "--delay", "5", "--t-dep", "10"])
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
     assert set(payload) == {"fidelity", "leakage", "in_subspace_fidelity"}
 
 
-def test_compare_fixed_n_cli_writes_summary_files(tmp_path: Path):
+def test_compare_fixed_n_cli_writes_summary_files(tmp_path: Path) -> None:
     state_path = tmp_path / "state_records.json"
     state_path.write_text(json.dumps([
         {
@@ -94,7 +95,7 @@ def test_compare_fixed_n_cli_writes_summary_files(tmp_path: Path):
     assert (tmp_path / "compare.md").exists()
 
 
-def test_compare_three_lanes_cli_writes_summary_files(tmp_path: Path):
+def test_compare_three_lanes_cli_writes_summary_files(tmp_path: Path) -> None:
     theory_path = tmp_path / "theory_compare.json"
     theory_path.write_text(json.dumps([
         {
@@ -278,10 +279,10 @@ def test_compare_three_lanes_cli_writes_summary_files(tmp_path: Path):
     assert (tmp_path / "three_lane.md").exists()
 
 
-def test_aer_fixed_n_sweep_cli_passes_requested_shots(monkeypatch):
-    captured: dict[str, object] = {}
+def test_aer_fixed_n_sweep_cli_passes_requested_shots(monkeypatch: Any) -> None:
+    captured: dict[str, Any] = {}
 
-    def fake_run(configs, **kwargs):
+    def fake_run(configs: Any, **kwargs: Any) -> Any:
         captured["shots"] = [config.shots for config in configs]
         captured["kwargs"] = kwargs
         return []
@@ -304,7 +305,7 @@ def test_aer_fixed_n_sweep_cli_passes_requested_shots(monkeypatch):
     assert captured["shots"] == [321, 321, 321]
 
 
-def test_blp_random_telegraph_scan_cli_writes_summary_files(tmp_path: Path):
+def test_blp_random_telegraph_scan_cli_writes_summary_files(tmp_path: Path) -> None:
     output_stem = tmp_path / "blp_rt"
     result = runner.invoke(
         app,
@@ -337,10 +338,10 @@ def test_blp_random_telegraph_scan_cli_writes_summary_files(tmp_path: Path):
     assert (tmp_path / "blp_rt.md").exists()
 
 
-def test_hardware_fixed_n_sweep_cli_passes_requested_parameters(monkeypatch):
-    captured: dict[str, object] = {}
+def test_hardware_fixed_n_sweep_cli_passes_requested_parameters(monkeypatch: Any) -> None:
+    captured: dict[str, Any] = {}
 
-    def fake_run(configs, backend, **kwargs):
+    def fake_run(configs: Any, backend: Any, **kwargs: Any) -> Any:
         captured["dimensions"] = [config.dimension for config in configs]
         captured["n_physical"] = [config.n_physical for config in configs]
         captured["delays"] = [list(config.delay_dt_values) for config in configs]
@@ -378,10 +379,10 @@ def test_hardware_fixed_n_sweep_cli_passes_requested_parameters(monkeypatch):
     assert callable(captured["kwargs"]["progress"])
 
 
-def test_hardware_fixed_n_process_tomography_cli_passes_requested_parameters(monkeypatch):
-    captured: dict[str, object] = {}
+def test_hardware_fixed_n_process_tomography_cli_passes_requested_parameters(monkeypatch: Any) -> None:
+    captured: dict[str, Any] = {}
 
-    def fake_run(configs, backend, **kwargs):
+    def fake_run(configs: Any, backend: Any, **kwargs: Any) -> Any:
         captured["dimensions"] = [config.dimension for config in configs]
         captured["n_physical"] = [config.n_physical for config in configs]
         captured["delays"] = [list(config.delay_dt_values) for config in configs]
@@ -419,7 +420,308 @@ def test_hardware_fixed_n_process_tomography_cli_passes_requested_parameters(mon
     assert callable(captured["kwargs"]["progress"])
 
 
-def test_calibrate_random_telegraph_cli_writes_outputs(tmp_path: Path):
+def test_hardware_multi_backend_fixed_n_sweep_cli_passes_requested_backends(monkeypatch: Any) -> None:
+    captured: dict[str, Any] = {}
+
+    def fake_run(configs: Any, backend_configs: Any, **kwargs: Any) -> Any:
+        captured["dimensions"] = [config.dimension for config in configs]
+        captured["backend_names"] = [backend.backend_name for backend in backend_configs]
+        captured["shots"] = [backend.shots for backend in backend_configs]
+        captured["kwargs"] = kwargs
+        return []
+
+    monkeypatch.setattr("teleportdim.run_multi_backend_fixed_n_sweep", fake_run)
+    result = runner.invoke(
+        app,
+        [
+            "hardware-multi-backend-fixed-n-sweep",
+            "--n-values",
+            "2",
+            "--backend-names",
+            "ibm_fez,ibm_torino",
+            "--shots",
+            "333",
+            "--delays",
+            "0,64",
+            "--bootstrap-samples",
+            "9",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert captured["dimensions"] == [2, 3, 4]
+    assert captured["backend_names"] == ["ibm_fez", "ibm_torino"]
+    assert captured["shots"] == [333, 333]
+    assert captured["kwargs"]["bootstrap_samples"] == 9
+    assert callable(captured["kwargs"]["progress"])
+
+
+def test_hardware_multi_backend_fixed_n_process_tomography_cli_passes_requested_backends(monkeypatch: Any) -> None:
+    captured: dict[str, Any] = {}
+
+    def fake_run(configs: Any, backend_configs: Any, **kwargs: Any) -> Any:
+        captured["dimensions"] = [config.dimension for config in configs]
+        captured["backend_names"] = [backend.backend_name for backend in backend_configs]
+        captured["shots"] = [backend.shots for backend in backend_configs]
+        captured["kwargs"] = kwargs
+        return []
+
+    monkeypatch.setattr("teleportdim.run_multi_backend_fixed_n_process_tomography", fake_run)
+    result = runner.invoke(
+        app,
+        [
+            "hardware-multi-backend-fixed-n-process-tomography",
+            "--n-values",
+            "2",
+            "--backend-names",
+            "ibm_fez,ibm_torino",
+            "--shots",
+            "444",
+            "--delays",
+            "0,64",
+            "--bootstrap-samples",
+            "7",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert captured["dimensions"] == [2, 3, 4]
+    assert captured["backend_names"] == ["ibm_fez", "ibm_torino"]
+    assert captured["shots"] == [444, 444]
+    assert captured["kwargs"]["bootstrap_samples"] == 7
+    assert callable(captured["kwargs"]["progress"])
+
+
+def test_compare_hardware_backends_cli_writes_summary_files(tmp_path: Path) -> None:
+    raw_path = tmp_path / "hardware_records.json"
+    raw_path.write_text(json.dumps([
+        {
+            "dimension": 2,
+            "n_physical": 2,
+            "fill_ratio": 0.50,
+            "delay_dt": 0,
+            "fidelity": 0.88,
+            "fidelity_ci_low": 0.86,
+            "fidelity_ci_high": 0.90,
+            "process_fidelity": 0.87,
+            "process_fidelity_ci_low": 0.84,
+            "process_fidelity_ci_high": 0.90,
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 3,
+            "n_physical": 2,
+            "fill_ratio": 0.75,
+            "delay_dt": 0,
+            "fidelity": 0.86,
+            "fidelity_ci_low": 0.85,
+            "fidelity_ci_high": 0.87,
+            "process_fidelity": 0.74,
+            "process_fidelity_ci_low": 0.71,
+            "process_fidelity_ci_high": 0.77,
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 4,
+            "n_physical": 2,
+            "fill_ratio": 1.00,
+            "delay_dt": 0,
+            "fidelity": 0.85,
+            "fidelity_ci_low": 0.84,
+            "fidelity_ci_high": 0.86,
+            "process_fidelity": 0.63,
+            "process_fidelity_ci_low": 0.61,
+            "process_fidelity_ci_high": 0.65,
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 2,
+            "n_physical": 2,
+            "fill_ratio": 0.50,
+            "delay_dt": 0,
+            "fidelity": 0.90,
+            "fidelity_ci_low": 0.88,
+            "fidelity_ci_high": 0.92,
+            "process_fidelity": 0.89,
+            "process_fidelity_ci_low": 0.86,
+            "process_fidelity_ci_high": 0.91,
+            "backend_name": "ibm_torino",
+        },
+        {
+            "dimension": 3,
+            "n_physical": 2,
+            "fill_ratio": 0.75,
+            "delay_dt": 0,
+            "fidelity": 0.87,
+            "fidelity_ci_low": 0.86,
+            "fidelity_ci_high": 0.88,
+            "process_fidelity": 0.76,
+            "process_fidelity_ci_low": 0.73,
+            "process_fidelity_ci_high": 0.79,
+            "backend_name": "ibm_torino",
+        },
+        {
+            "dimension": 4,
+            "n_physical": 2,
+            "fill_ratio": 1.00,
+            "delay_dt": 0,
+            "fidelity": 0.84,
+            "fidelity_ci_low": 0.83,
+            "fidelity_ci_high": 0.85,
+            "process_fidelity": 0.61,
+            "process_fidelity_ci_low": 0.59,
+            "process_fidelity_ci_high": 0.63,
+            "backend_name": "ibm_torino",
+        },
+    ]))
+    output_stem = tmp_path / "hardware_backends"
+    result = runner.invoke(
+        app,
+        [
+            "compare-hardware-backends",
+            "--input-json",
+            str(raw_path),
+            "--n-physical",
+            "2",
+            "--output-stem",
+            str(output_stem),
+        ],
+    )
+
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert any(row["backend_name"] == "ibm_fez" for row in payload)
+    assert any(row["backend_name"] == "ibm_torino" and row["metric"] == "process_fidelity" for row in payload)
+    assert (tmp_path / "hardware_backends.json").exists()
+    assert (tmp_path / "hardware_backends.csv").exists()
+    assert (tmp_path / "hardware_backends.md").exists()
+
+
+def test_compare_hardware_theory_cli_writes_summary_files_and_plots(tmp_path: Path) -> None:
+    theory_path = tmp_path / "theory_compare.json"
+    theory_path.write_text(json.dumps([
+        {
+            "n_physical": 2,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "source_simulation_lanes": "markovian_model",
+            "contains_theory_baseline": True,
+            "contains_explicit_theory_mixing": True,
+            "d2|fill_ratio": 0.5,
+            "d2|metric|fidelity": 0.99,
+            "d2|metric_ci|fidelity|low": 0.98,
+            "d2|metric_ci|fidelity|high": 1.00,
+            "d3|fill_ratio": 0.75,
+            "d3|metric|fidelity": 0.98,
+            "d3|metric_ci|fidelity|low": 0.97,
+            "d3|metric_ci|fidelity|high": 0.99,
+            "d4|fill_ratio": 1.0,
+            "d4|metric|fidelity": 0.97,
+            "d4|metric_ci|fidelity|low": 0.96,
+            "d4|metric_ci|fidelity|high": 0.98,
+        }
+    ]))
+    hardware_path = tmp_path / "hardware_records.json"
+    hardware_path.write_text(json.dumps([
+        {
+            "dimension": 2,
+            "n_physical": 2,
+            "fill_ratio": 0.50,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.88,
+            "fidelity_ci_low": 0.86,
+            "fidelity_ci_high": 0.90,
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 3,
+            "n_physical": 2,
+            "fill_ratio": 0.75,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.86,
+            "fidelity_ci_low": 0.85,
+            "fidelity_ci_high": 0.87,
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 4,
+            "n_physical": 2,
+            "fill_ratio": 1.00,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.85,
+            "fidelity_ci_low": 0.84,
+            "fidelity_ci_high": 0.86,
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 2,
+            "n_physical": 2,
+            "fill_ratio": 0.50,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.90,
+            "fidelity_ci_low": 0.88,
+            "fidelity_ci_high": 0.92,
+            "backend_name": "ibm_torino",
+        },
+        {
+            "dimension": 3,
+            "n_physical": 2,
+            "fill_ratio": 0.75,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.87,
+            "fidelity_ci_low": 0.86,
+            "fidelity_ci_high": 0.88,
+            "backend_name": "ibm_torino",
+        },
+        {
+            "dimension": 4,
+            "n_physical": 2,
+            "fill_ratio": 1.00,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.84,
+            "fidelity_ci_low": 0.83,
+            "fidelity_ci_high": 0.85,
+            "backend_name": "ibm_torino",
+        },
+    ]))
+    output_stem = tmp_path / "hardware_theory"
+    result = runner.invoke(
+        app,
+        [
+            "compare-hardware-theory",
+            "--theory-json",
+            str(theory_path),
+            "--hardware-json",
+            str(hardware_path),
+            "--n-physical",
+            "2",
+            "--metrics",
+            "fidelity",
+            "--dimensions",
+            "3,4",
+            "--output-stem",
+            str(output_stem),
+        ],
+    )
+
+    assert result.exit_code == 0
+    payload = json.loads(result.stdout)
+    assert any(row["backend_name"] == "ibm_fez" and row["dimension"] == 3 for row in payload)
+    assert any("delta_hardware_minus_theory" in row for row in payload)
+    assert (tmp_path / "hardware_theory.json").exists()
+    assert (tmp_path / "hardware_theory.csv").exists()
+    assert (tmp_path / "hardware_theory.md").exists()
+    assert (tmp_path / "hardware_theory_fidelity_d3_curves.png").exists()
+    assert (tmp_path / "hardware_theory_fidelity_d3_delta.png").exists()
+
+
+def test_calibrate_random_telegraph_cli_writes_outputs(tmp_path: Path) -> None:
     input_path = tmp_path / "process_records.json"
     input_path.write_text(json.dumps([
         {

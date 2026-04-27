@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 import numpy as np
 import pytest
 import teleportdim
@@ -16,7 +17,7 @@ from teleportdim.sweeps import (
 )
 
 
-def test_markovian_fixed_n_sweep_includes_fill_ratio_metrics_and_probe_averages():
+def test_markovian_fixed_n_sweep_includes_fill_ratio_metrics_and_probe_averages() -> None:
     configs = fixed_n_sweep_configs([2], delay_dt_values=[0, 5], state_family='computational')
     records = run_markovian_fixed_n_sweep(configs, t1=20.0, t2=15.0, t_dep=10.0, bootstrap_samples=8, dt_ns_per_dt=0.222)
     assert len(records) == 6
@@ -32,7 +33,7 @@ def test_markovian_fixed_n_sweep_includes_fill_ratio_metrics_and_probe_averages(
     assert any(record['leakage'] > 0.0 for record in records if record['delay_dt'] > 0)
 
 
-def test_correlated_memory_fixed_n_sweep_tracks_steps():
+def test_correlated_memory_fixed_n_sweep_tracks_steps() -> None:
     configs = fixed_n_sweep_configs([2], delay_dt_values=[0], state_family='fourier')
     records = run_correlated_memory_fixed_n_sweep(
         configs,
@@ -45,7 +46,7 @@ def test_correlated_memory_fixed_n_sweep_tracks_steps():
     assert {record['step'] for record in records} == {0, 1, 2, 3}
 
 
-def test_aer_fixed_n_sweep_runs_full_circuit_average_for_qubit_case():
+def test_aer_fixed_n_sweep_runs_full_circuit_average_for_qubit_case() -> None:
     pytest = __import__("pytest")
     pytest.importorskip("qiskit")
     pytest.importorskip("qiskit_aer")
@@ -70,7 +71,7 @@ def test_aer_fixed_n_sweep_runs_full_circuit_average_for_qubit_case():
     assert record['avg_probe_fidelity_ci_low'] <= record['avg_probe_fidelity_ci_high']
 
 
-def test_aer_fixed_n_sweep_bootstrap_handles_explicit_fixed_n_embedding():
+def test_aer_fixed_n_sweep_bootstrap_handles_explicit_fixed_n_embedding() -> None:
     pytest = __import__("pytest")
     pytest.importorskip("qiskit")
     pytest.importorskip("qiskit_aer")
@@ -93,7 +94,7 @@ def test_aer_fixed_n_sweep_bootstrap_handles_explicit_fixed_n_embedding():
     assert all(record['fidelity_ci_low'] <= record['fidelity'] <= record['fidelity_ci_high'] for record in records)
 
 
-def test_aer_fixed_n_sweep_tracks_delay_calibration_and_higher_dimension_decay():
+def test_aer_fixed_n_sweep_tracks_delay_calibration_and_higher_dimension_decay() -> None:
     pytest = __import__("pytest")
     pytest.importorskip("qiskit")
     pytest.importorskip("qiskit_aer")
@@ -108,7 +109,7 @@ def test_aer_fixed_n_sweep_tracks_delay_calibration_and_higher_dimension_decay()
         dt_ns_per_dt=100.0,
         seed_simulator=41,
     )
-    by_dimension = {}
+    by_dimension: dict[int, dict[int, dict[str, Any]]] = {}
     for record in records:
         by_dimension.setdefault(record['dimension'], {})[record['delay_dt']] = record
 
@@ -117,7 +118,7 @@ def test_aer_fixed_n_sweep_tracks_delay_calibration_and_higher_dimension_decay()
     assert by_dimension[4][64]['fidelity'] < by_dimension[4][0]['fidelity']
 
 
-def test_blp_memory_scan_returns_dimension_tagged_records():
+def test_blp_memory_scan_returns_dimension_tagged_records() -> None:
     records = run_blp_memory_scan([2, 3], [0.0, 0.8], steps=4, base_phase_flip_probability=0.1, samples=2048)
     assert len(records) == 4
     assert {record['dimension'] for record in records} == {2, 3}
@@ -126,7 +127,7 @@ def test_blp_memory_scan_returns_dimension_tagged_records():
     assert by_strength[0.8] >= by_strength[0.0]
 
 
-def test_blp_random_telegraph_scan_returns_calibrated_fixed_n_records():
+def test_blp_random_telegraph_scan_returns_calibrated_fixed_n_records() -> None:
     records = run_blp_random_telegraph_scan(
         [2, 3],
         [0.0125, 0.05],
@@ -145,7 +146,7 @@ def test_blp_random_telegraph_scan_returns_calibrated_fixed_n_records():
     assert all(record['blp_measure'] >= 0.0 for record in records)
 
 
-def test_hardware_fixed_n_sweep_averages_canonical_probe_records(monkeypatch):
+def test_hardware_fixed_n_sweep_averages_canonical_probe_records(monkeypatch: Any) -> None:
     class FakeTarget:
         dt = 4e-9
         operation_names = {"if_else", "delay"}
@@ -160,20 +161,20 @@ def test_hardware_fixed_n_sweep_averages_canonical_probe_records(monkeypatch):
     one = np.array([0.0, 1.0], dtype=complex)
     plus = np.array([1.0, 1.0], dtype=complex) / np.sqrt(2.0)
 
-    def fake_select_backend(_config):
+    def fake_select_backend(_config: Any) -> Any:
         return backend
 
-    def fake_validate_backend_for_experiment(_backend, **_kwargs):
+    def fake_validate_backend_for_experiment(_backend: Any, **_kwargs: Any) -> Any:
         return None
 
     def fake_build_block_teleportation_circuit(
-        logical_state,
-        dimension,
+        logical_state: Any,
+        dimension: Any,
         *,
-        n_physical,
-        delay_after_entanglement_dt,
-        correction_mode,
-    ):
+        n_physical: Any,
+        delay_after_entanglement_dt: Any,
+        correction_mode: Any,
+    ) -> Any:
         return {
             "state": np.asarray(logical_state, dtype=complex),
             "dimension": dimension,
@@ -182,21 +183,21 @@ def test_hardware_fixed_n_sweep_averages_canonical_probe_records(monkeypatch):
             "correction_mode": correction_mode,
         }
 
-    def fake_append_output_measurements(program, basis):
+    def fake_append_output_measurements(program: Any, basis: Any) -> Any:
         return {"state": program["state"], "basis": basis}
 
-    def fake_transpile_isa(circuits, backend, optimization_level):
+    def fake_transpile_isa(circuits: Any, backend: Any, optimization_level: Any) -> Any:
         assert backend is not None
         assert optimization_level == 1
         return list(circuits)
 
-    def fake_run_sampler_job(circuits, backend, shots, use_session):
+    def fake_run_sampler_job(circuits: Any, backend: Any, shots: Any, use_session: Any) -> Any:
         assert backend is not None
         assert shots == 64
         assert use_session is False
         return list(circuits)
 
-    def fake_extract_register_counts(pub_result, register_name):
+    def fake_extract_register_counts(pub_result: Any, register_name: Any) -> Any:
         assert register_name.startswith("out_")
         state = pub_result["state"]
         basis = pub_result["basis"]
@@ -234,7 +235,7 @@ def test_hardware_fixed_n_sweep_averages_canonical_probe_records(monkeypatch):
     assert record["fidelity_ci_low"] <= record["fidelity"] <= record["fidelity_ci_high"]
 
 
-def test_run_hardware_process_tomography_returns_high_process_fidelity(monkeypatch):
+def test_run_hardware_process_tomography_returns_high_process_fidelity(monkeypatch: Any) -> None:
     class FakeTarget:
         dt = 4e-9
         operation_names = {"if_else", "delay"}
@@ -250,20 +251,20 @@ def test_run_hardware_process_tomography_returns_high_process_fidelity(monkeypat
     plus = np.array([1.0, 1.0], dtype=complex) / np.sqrt(2.0)
     plus_i = np.array([1.0, 1.0j], dtype=complex) / np.sqrt(2.0)
 
-    def fake_select_backend(_config):
+    def fake_select_backend(_config: Any) -> Any:
         return backend
 
-    def fake_validate_backend_for_experiment(_backend, **_kwargs):
+    def fake_validate_backend_for_experiment(_backend: Any, **_kwargs: Any) -> Any:
         return None
 
     def fake_build_block_teleportation_circuit(
-        logical_state,
-        dimension,
+        logical_state: Any,
+        dimension: Any,
         *,
-        n_physical,
-        delay_after_entanglement_dt,
-        correction_mode,
-    ):
+        n_physical: Any,
+        delay_after_entanglement_dt: Any,
+        correction_mode: Any,
+    ) -> Any:
         return {
             "state": np.asarray(logical_state, dtype=complex),
             "dimension": dimension,
@@ -272,21 +273,21 @@ def test_run_hardware_process_tomography_returns_high_process_fidelity(monkeypat
             "correction_mode": correction_mode,
         }
 
-    def fake_append_output_measurements(program, basis):
+    def fake_append_output_measurements(program: Any, basis: Any) -> Any:
         return {"state": program["state"], "basis": basis}
 
-    def fake_transpile_isa(circuits, backend, optimization_level):
+    def fake_transpile_isa(circuits: Any, backend: Any, optimization_level: Any) -> Any:
         assert backend is not None
         assert optimization_level == 1
         return list(circuits)
 
-    def fake_run_sampler_job(circuits, backend, shots, use_session):
+    def fake_run_sampler_job(circuits: Any, backend: Any, shots: Any, use_session: Any) -> Any:
         assert backend is not None
         assert shots == 64
         assert use_session is False
         return list(circuits)
 
-    def fake_extract_register_counts(pub_result, register_name):
+    def fake_extract_register_counts(pub_result: Any, register_name: Any) -> Any:
         assert register_name.startswith("out_")
         state = pub_result["state"]
         basis = pub_result["basis"]

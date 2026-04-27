@@ -16,7 +16,7 @@ def main() -> None:
         bootstrap_samples=64,
     )
 
-    out_dir = Path("artifacts/aer_fixed_n")
+    out_dir = Path("results/aer_fixed_n")
     out_dir.mkdir(parents=True, exist_ok=True)
     save_json(records, out_dir / "aer_fixed_n.json")
     save_csv(records, out_dir / "aer_fixed_n.csv")

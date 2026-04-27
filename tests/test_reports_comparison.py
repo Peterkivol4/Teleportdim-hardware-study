@@ -1,17 +1,26 @@
 from __future__ import annotations
 
+from typing import Any
+import json
 from pathlib import Path
 
 from teleportdim.reports import (
+    load_backend_fixed_n_summary_rows,
+    merge_backend_fixed_n_summary_rows,
     merge_fixed_n_summary_rows,
+    save_backend_fixed_n_markdown_report,
     save_fixed_n_markdown_report,
+    save_hardware_theory_divergence_markdown_report,
     save_three_lane_fixed_n_markdown_report,
+    summarize_backend_fixed_n_comparison,
+    summarize_backend_fixed_n_table,
     summarize_fixed_n_comparison,
+    summarize_hardware_theory_divergence,
     summarize_three_lane_fixed_n_table,
 )
 
 
-def _sample_records():
+def _sample_records() -> Any:
     return [
         {"dimension": 2, "n_physical": 2, "fill_ratio": 0.50, "delay_dt": 0, "avg_probe_fidelity": 0.94, "avg_probe_leakage": 0.01, "avg_probe_in_subspace_fidelity": 0.96, "simulation_lane": "markovian_model", "t_dep": 10.0},
         {"dimension": 3, "n_physical": 2, "fill_ratio": 0.75, "delay_dt": 0, "avg_probe_fidelity": 0.95, "avg_probe_leakage": 0.02, "avg_probe_in_subspace_fidelity": 0.97, "simulation_lane": "markovian_model", "t_dep": 10.0},
@@ -22,7 +31,7 @@ def _sample_records():
     ]
 
 
-def test_summarize_fixed_n_comparison_builds_reference_delta_columns():
+def test_summarize_fixed_n_comparison_builds_reference_delta_columns() -> None:
     summary = summarize_fixed_n_comparison(
         _sample_records(),
         n_physical=2,
@@ -34,7 +43,7 @@ def test_summarize_fixed_n_comparison_builds_reference_delta_columns():
     assert summary[0]['delta|d4-d3|metric|avg_probe_fidelity'] > 0
 
 
-def test_save_fixed_n_markdown_report_writes_file(tmp_path: Path):
+def test_save_fixed_n_markdown_report_writes_file(tmp_path: Path) -> None:
     summary = summarize_fixed_n_comparison(
         _sample_records(),
         n_physical=2,
@@ -51,7 +60,7 @@ def test_save_fixed_n_markdown_report_writes_file(tmp_path: Path):
     assert 'avg_probe_fidelity' in text
 
 
-def _sample_three_lane_summaries():
+def _sample_three_lane_summaries() -> Any:
     theory_summary = summarize_fixed_n_comparison(
         [
             {
@@ -285,7 +294,7 @@ def _sample_three_lane_summaries():
     }
 
 
-def test_summarize_three_lane_fixed_n_table_builds_lane_metric_rows():
+def test_summarize_three_lane_fixed_n_table_builds_lane_metric_rows() -> None:
     rows = summarize_three_lane_fixed_n_table(_sample_three_lane_summaries())
     assert any(row["lane"] == "theory" and row["metric"] == "fidelity" for row in rows)
     assert any(
@@ -295,7 +304,7 @@ def test_summarize_three_lane_fixed_n_table_builds_lane_metric_rows():
     assert all(row["reference_dimension"] == 4 for row in rows)
 
 
-def test_save_three_lane_fixed_n_markdown_report_writes_file(tmp_path: Path):
+def test_save_three_lane_fixed_n_markdown_report_writes_file(tmp_path: Path) -> None:
     rows = summarize_three_lane_fixed_n_table(_sample_three_lane_summaries())
     path = save_three_lane_fixed_n_markdown_report(
         rows,
@@ -309,3 +318,184 @@ def test_save_three_lane_fixed_n_markdown_report_writes_file(tmp_path: Path):
     assert "preserves each lane's native delay grid" in text
     assert "structurally zero" in text
     assert "Process fidelity" in text
+
+
+def _sample_multi_backend_records() -> Any:
+    return [
+        {
+            "dimension": 2,
+            "n_physical": 2,
+            "fill_ratio": 0.50,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.88,
+            "fidelity_ci_low": 0.86,
+            "fidelity_ci_high": 0.90,
+            "process_fidelity": 0.87,
+            "process_fidelity_ci_low": 0.84,
+            "process_fidelity_ci_high": 0.90,
+            "simulation_lane": "ibm_runtime_process_tomography",
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 3,
+            "n_physical": 2,
+            "fill_ratio": 0.75,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.86,
+            "fidelity_ci_low": 0.85,
+            "fidelity_ci_high": 0.87,
+            "process_fidelity": 0.74,
+            "process_fidelity_ci_low": 0.71,
+            "process_fidelity_ci_high": 0.77,
+            "simulation_lane": "ibm_runtime_process_tomography",
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 4,
+            "n_physical": 2,
+            "fill_ratio": 1.00,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.85,
+            "fidelity_ci_low": 0.84,
+            "fidelity_ci_high": 0.86,
+            "process_fidelity": 0.63,
+            "process_fidelity_ci_low": 0.61,
+            "process_fidelity_ci_high": 0.65,
+            "simulation_lane": "ibm_runtime_process_tomography",
+            "backend_name": "ibm_fez",
+        },
+        {
+            "dimension": 2,
+            "n_physical": 2,
+            "fill_ratio": 0.50,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.90,
+            "fidelity_ci_low": 0.88,
+            "fidelity_ci_high": 0.92,
+            "process_fidelity": 0.89,
+            "process_fidelity_ci_low": 0.86,
+            "process_fidelity_ci_high": 0.91,
+            "simulation_lane": "ibm_runtime_process_tomography",
+            "backend_name": "ibm_torino",
+        },
+        {
+            "dimension": 3,
+            "n_physical": 2,
+            "fill_ratio": 0.75,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.87,
+            "fidelity_ci_low": 0.86,
+            "fidelity_ci_high": 0.88,
+            "process_fidelity": 0.76,
+            "process_fidelity_ci_low": 0.73,
+            "process_fidelity_ci_high": 0.79,
+            "simulation_lane": "ibm_runtime_process_tomography",
+            "backend_name": "ibm_torino",
+        },
+        {
+            "dimension": 4,
+            "n_physical": 2,
+            "fill_ratio": 1.00,
+            "delay_dt": 0,
+            "dt_ns": 0.0,
+            "fidelity": 0.84,
+            "fidelity_ci_low": 0.83,
+            "fidelity_ci_high": 0.85,
+            "process_fidelity": 0.61,
+            "process_fidelity_ci_low": 0.59,
+            "process_fidelity_ci_high": 0.63,
+            "simulation_lane": "ibm_runtime_process_tomography",
+            "backend_name": "ibm_torino",
+        },
+    ]
+
+
+def test_summarize_backend_fixed_n_comparison_preserves_backend_names() -> None:
+    summary_rows = summarize_backend_fixed_n_comparison(
+        _sample_multi_backend_records(),
+        n_physical=2,
+    )
+    assert {row["backend_name"] for row in summary_rows} == {"ibm_fez", "ibm_torino"}
+
+
+def test_summarize_backend_fixed_n_table_and_report_write_backend_sections(tmp_path: Path) -> None:
+    summary_rows = summarize_backend_fixed_n_comparison(
+        _sample_multi_backend_records(),
+        n_physical=2,
+    )
+    rows = summarize_backend_fixed_n_table(merge_backend_fixed_n_summary_rows(summary_rows))
+    assert any(row["backend_name"] == "ibm_fez" and row["metric"] == "fidelity" for row in rows)
+    assert any(row["backend_name"] == "ibm_torino" and row["metric"] == "process_fidelity" for row in rows)
+
+    path = save_backend_fixed_n_markdown_report(rows, path=tmp_path / "backends.md")
+    text = path.read_text()
+    assert path.exists()
+    assert "Backend Overview" in text
+    assert "ibm_fez" in text
+    assert "ibm_torino" in text
+    assert "structurally zero" in text
+
+
+def test_load_backend_fixed_n_summary_rows_infers_backend_name_from_path(tmp_path: Path) -> None:
+    summary = summarize_fixed_n_comparison(
+        [
+            {
+                "dimension": 2,
+                "n_physical": 2,
+                "fill_ratio": 0.50,
+                "delay_dt": 0,
+                "fidelity": 0.90,
+            },
+            {
+                "dimension": 3,
+                "n_physical": 2,
+                "fill_ratio": 0.75,
+                "delay_dt": 0,
+                "fidelity": 0.87,
+            },
+            {
+                "dimension": 4,
+                "n_physical": 2,
+                "fill_ratio": 1.00,
+                "delay_dt": 0,
+                "fidelity": 0.84,
+            },
+        ],
+        n_physical=2,
+    )
+    path = tmp_path / "ibm_fez_compare.json"
+    path.write_text(json.dumps(summary))
+    loaded = load_backend_fixed_n_summary_rows([str(path)], n_physical=2)
+    assert loaded[0]["backend_name"] == "ibm_fez"
+
+
+def test_summarize_hardware_theory_divergence_and_report(tmp_path: Path) -> None:
+    theory_summary = _sample_three_lane_summaries()["theory"]
+    hardware_summary = merge_backend_fixed_n_summary_rows(
+        summarize_backend_fixed_n_comparison(_sample_multi_backend_records(), n_physical=2)
+    )
+    rows = summarize_hardware_theory_divergence(
+        theory_summary,
+        hardware_summary,
+        metrics=("fidelity",),
+        dimensions=(3, 4),
+    )
+    assert any(row["backend_name"] == "ibm_fez" and row["dimension"] == 3 for row in rows)
+    assert any(row["backend_name"] == "ibm_torino" and row["dimension"] == 4 for row in rows)
+    assert any("delta_hardware_minus_theory" in row for row in rows)
+
+    path = save_hardware_theory_divergence_markdown_report(
+        rows,
+        path=tmp_path / "hardware_theory.md",
+    )
+    text = path.read_text()
+    assert path.exists()
+    assert "Hardware versus theory divergence" in text
+    assert "ibm_fez" in text
+    assert "ibm_torino" in text
+    assert "Δ(H-T)" in text

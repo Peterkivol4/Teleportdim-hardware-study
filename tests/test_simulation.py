@@ -1,3 +1,5 @@
+from typing import cast
+
 import numpy as np
 import pytest
 
@@ -13,7 +15,7 @@ from teleportdim.simulation import (
 from teleportdim.states import computational_basis_state, fourier_state
 
 
-def test_markovian_observables_include_leakage_and_subspace_metrics():
+def test_markovian_observables_include_leakage_and_subspace_metrics() -> None:
     state = computational_basis_state(3, 1)
     obs = markovian_delay_observables(state, 3, delay=20.0, t1=10.0, t2=20.0, t_dep=15.0)
     assert set(obs) == {"fidelity", "leakage", "in_subspace_fidelity"}
@@ -22,7 +24,7 @@ def test_markovian_observables_include_leakage_and_subspace_metrics():
     assert obs["leakage"] > 0.0
 
 
-def test_correlated_memory_observables_can_generate_leakage_under_pauli_memory_model():
+def test_correlated_memory_observables_can_generate_leakage_under_pauli_memory_model() -> None:
     state = computational_basis_state(3, 1)
     obs = correlated_memory_observables(
         state,
@@ -37,7 +39,7 @@ def test_correlated_memory_observables_can_generate_leakage_under_pauli_memory_m
     assert any(item["leakage"] > 0.0 for item in obs[1:])
 
 
-def test_blp_measure_is_small_in_markovian_limit_and_grows_with_memory():
+def test_blp_measure_is_small_in_markovian_limit_and_grows_with_memory() -> None:
     state_a = computational_basis_state(2, 0)
     state_b = fourier_state(2, 0)
     markov = blp_non_markovianity(
@@ -60,12 +62,15 @@ def test_blp_measure_is_small_in_markovian_limit_and_grows_with_memory():
         samples=4096,
         seed=5,
     )
-    assert markov["blp_measure"] < 0.01
-    assert memory["blp_measure"] >= markov["blp_measure"]
-    assert len(memory["trace_distances"]) == 7
+    markov_measure = cast(float, markov["blp_measure"])
+    memory_measure = cast(float, memory["blp_measure"])
+    memory_trace_distances = cast(list[float], memory["trace_distances"])
+    assert markov_measure < 0.01
+    assert memory_measure >= markov_measure
+    assert len(memory_trace_distances) == 7
 
 
-def test_blp_respects_explicit_n_physical_embedding():
+def test_blp_respects_explicit_n_physical_embedding() -> None:
     state_a = computational_basis_state(2, 0)
     state_b = fourier_state(2, 0)
     result = blp_non_markovianity(
@@ -79,11 +84,12 @@ def test_blp_respects_explicit_n_physical_embedding():
         samples=1024,
         seed=9,
     )
-    assert len(result["trace_distances"]) == 5
-    assert all(distance >= 0.0 for distance in result["trace_distances"])
+    trace_distances = cast(list[float], result["trace_distances"])
+    assert len(trace_distances) == 5
+    assert all(distance >= 0.0 for distance in trace_distances)
 
 
-def test_random_telegraph_dephasing_is_physical_and_can_show_more_backflow_when_switching_is_slow():
+def test_random_telegraph_dephasing_is_physical_and_can_show_more_backflow_when_switching_is_slow() -> None:
     plus = fourier_state(2, 0)
     minus = fourier_state(2, 1)
     observables = random_telegraph_dephasing_observables(
@@ -118,10 +124,12 @@ def test_random_telegraph_dephasing_is_physical_and_can_show_more_backflow_when_
         samples=2048,
         seed=13,
     )
-    assert slow["blp_measure"] >= fast["blp_measure"]
+    slow_measure = cast(float, slow["blp_measure"])
+    fast_measure = cast(float, fast["blp_measure"])
+    assert slow_measure >= fast_measure
 
 
-def test_random_telegraph_calibration_recovers_effective_t2_and_switch_probability():
+def test_random_telegraph_calibration_recovers_effective_t2_and_switch_probability() -> None:
     dimension = 2
     n_physical = 1
     floor = 1.0 / (dimension * dimension)
