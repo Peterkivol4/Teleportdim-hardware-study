@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "teleportdim"
-version = "0.3.1"
-description = "IBM-compatible encoded-dimension quantum teleportation experiments"
+version = "0.6.0"
+description = "Channel-body deformation study for fixed-qubit logical teleportation"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}

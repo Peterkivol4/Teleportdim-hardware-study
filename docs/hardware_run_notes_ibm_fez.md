@@ -2,6 +2,14 @@
 
 This note records the practical path that produced the saved `ibm_fez` artifacts. It is not a polished thesis chapter; it is the short operational narrative that explains what actually ran, what looked wrong at first, and what changed the interpretation.
 
+## Short hardware narrative
+
+The live run was not a clean "submit once, trust the curve" experiment. The first layer of work was operational: check that `ibm_fez` exposed enough qubits, accepted scheduled `delay` instructions, and supported the dynamic-circuit branch needed for feed-forward correction. Only after those checks did the run become a tomography problem.
+
+The exact IBM queue durations and Runtime job IDs were not preserved in the committed artifacts. That is a real reproducibility gap, and the next hardware pass should write queue wait, job ID, calibration timestamp, backend topology snapshot, shots, and correction mode into the result JSON next to every record. What is preserved here is the experimental path: the run had to be split into small state- and process-tomography jobs for `d=2`, `d=3`, and `d=4`, then interpreted against a matched Aer rerun because the short hardware delay grid produced suspicious non-monotone points.
+
+What failed was not mainly authentication or result parsing; those paths worked after backend validation. The scientific failure mode was subtler: low-shot tomography on a short delay grid made both hardware and early Aer curves look more precise than they were. The first surprising feature was that `d=4` had exactly zero leakage for a structural reason, but still produced a lower reconstructed process fidelity than `d=3`. The second surprise was that the delay trend itself was not trustworthy until the simulator side was rerun at higher shots and bootstrap count.
+
 ## What ran
 
 - Live state-tomography fixed-`n` sweep on `ibm_fez` with `n=2`, `d in {2,3,4}`, `delay_dt in {0,64,128}`, `256` shots, and `100` bootstrap resamples.

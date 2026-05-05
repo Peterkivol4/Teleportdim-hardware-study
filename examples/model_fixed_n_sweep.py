@@ -7,10 +7,14 @@ from teleportdim.sweeps import fixed_n_sweep_configs, run_markovian_fixed_n_swee
 
 
 def main() -> None:
-    configs = fixed_n_sweep_configs([1, 2, 3], delay_dt_values=[0, 32, 64, 128], state_family="fourier")
-    records = run_markovian_fixed_n_sweep(configs, t1=120.0, t2=80.0, t_dep=160.0)
+    configs = fixed_n_sweep_configs(
+        [1, 2, 3],
+        delay_dt_values=[0, 2048, 4096, 8192],
+        state_family="fourier",
+    )
+    records = run_markovian_fixed_n_sweep(configs, t1=540540.0, t2=360360.0, t_dep=360360.0)
 
-    out_dir = Path('results')
+    out_dir = Path("results/examples/model_fixed_n")
     out_dir.mkdir(exist_ok=True)
     save_json(records, out_dir / 'markovian_fixed_n.json')
     save_csv(records, out_dir / 'markovian_fixed_n.csv')
@@ -19,8 +23,8 @@ def main() -> None:
     plot_metric_vs_fill_ratio(
         records,
         metric='fidelity',
-        delay_dt=128,
-        path=out_dir / 'fidelity_vs_fill_ratio_delay128.png',
+        delay_dt=8192,
+        path=out_dir / 'fidelity_vs_fill_ratio_delay8192.png',
     )
 
 

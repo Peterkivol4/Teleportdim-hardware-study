@@ -1,8 +1,8 @@
 # Channel-Body Deformation in Fixed-Qubit Logical Teleportation
 
-**Author:** Hirresh Sundra  
-**Project:** TeleportDim v0.3.1  
-**Status:** Channel-deformation reframing draft  
+**Author:** Hirresh Sundra
+**Project:** TeleportDim v0.6.0
+**Status:** Channel-deformation reframing draft
 **Primary code artifacts:** `src/teleportdim/noise_bodies.py`, `src/teleportdim/deformation.py`, `src/teleportdim/body_sweeps.py`, `src/teleportdim/fingerprinting.py`
 
 ## Abstract

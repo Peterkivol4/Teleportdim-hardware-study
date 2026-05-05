@@ -7,7 +7,11 @@ from teleportdim.sweeps import fixed_n_sweep_configs, run_aer_fixed_n_sweep
 
 
 def main() -> None:
-    configs = fixed_n_sweep_configs([2], delay_dt_values=[0, 32, 64, 128], state_family="fourier")
+    configs = fixed_n_sweep_configs(
+        [2],
+        delay_dt_values=[0, 2048, 4096, 8192],
+        state_family="fourier",
+    )
     records = run_aer_fixed_n_sweep(
         configs,
         correction_mode="dynamic",
@@ -16,7 +20,7 @@ def main() -> None:
         bootstrap_samples=64,
     )
 
-    out_dir = Path("results/aer_fixed_n")
+    out_dir = Path("results/examples/aer_fixed_n")
     out_dir.mkdir(parents=True, exist_ok=True)
     save_json(records, out_dir / "aer_fixed_n.json")
     save_csv(records, out_dir / "aer_fixed_n.csv")
@@ -25,11 +29,10 @@ def main() -> None:
     plot_metric_vs_fill_ratio(
         records,
         metric="fidelity",
-        delay_dt=128,
-        path=out_dir / "fidelity_vs_fill_ratio_delay128.png",
+        delay_dt=8192,
+        path=out_dir / "fidelity_vs_fill_ratio_delay8192.png",
     )
 
 
 if __name__ == "__main__":
     main()
-

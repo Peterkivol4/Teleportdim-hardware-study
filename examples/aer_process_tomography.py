@@ -8,8 +8,8 @@ from teleportdim.reports import plot_metric_vs_delay, save_csv, save_json
 
 
 def main() -> None:
-    sweep = SweepConfig(dimension=3, delay_dt_values=[0, 32, 64], shots=1024)
-    backend = BackendConfig(shots=1024, correction_mode="dynamic")
+    sweep = SweepConfig(dimension=3, n_physical=2, delay_dt_values=[0, 2048, 4096], shots=2048)
+    backend = BackendConfig(shots=2048, correction_mode="dynamic")
     noise_model = build_basic_noise_model(depolarizing_1q=0.001, depolarizing_2q=0.01)
     records = run_aer_process_tomography(
         sweep,
@@ -18,7 +18,7 @@ def main() -> None:
         bootstrap_samples=64,
     )
 
-    out_dir = Path("results/aer_process")
+    out_dir = Path("results/examples/aer_process")
     out_dir.mkdir(parents=True, exist_ok=True)
     save_json(records, out_dir / "aer_process.json")
     save_csv(records, out_dir / "aer_process.csv")

@@ -3,7 +3,7 @@
 The implementation is split across marker-derived submodules; this package root
 re-exports the stable public API for existing notebooks, scripts, and CLI entrypoints.
 """
-__version__ = "0.3.1"
+__version__ = "0.6.0"
 from .config import *  # noqa: F403
 from .encoding import *  # noqa: F403
 from .states import *  # noqa: F403

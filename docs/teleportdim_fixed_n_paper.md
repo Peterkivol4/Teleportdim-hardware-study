@@ -1,10 +1,10 @@
-# Fixed-Physical-Qubit Logical Teleportation in Partially Filled Hilbert Spaces:
+# Supporting Fixed-\(n\) Analysis for TeleportDim Channel-Body Deformation:
 # Leakage, Channel Fidelity, and Delay Dependence across Effective Models, Aer, and IBM Heron Hardware
 
-**Author:** Hirresh Sundra  
-**Project:** TeleportDim v0.3.1  
-**Format:** Thesis-style research manuscript / arXiv-ready draft  
-**Primary repository artifact:** `src/teleportdim/`  
+**Author:** Hirresh Sundra
+**Project:** TeleportDim v0.6.0
+**Format:** Thesis-style research manuscript / arXiv-ready draft
+**Primary repository artifact:** `src/teleportdim/`
 
 ## Abstract
 
@@ -365,31 +365,19 @@ The delay block is inserted *after* Bell-pair generation and *before* Bell-state
 
 For each fixed-\(d\), fixed-delay record, the pipeline computes an “observed” estimate from the collected counts and then bootstraps the same counts multinomially to estimate confidence intervals [Listing 2]. This design prevents a subtle but serious error: if point estimates and confidence intervals are derived from different stochastic runs, the point estimate can lie outside its own confidence interval. The current implementation avoids that pathology by construction.
 
-### E. Figures and Artifact Model
+### E. Figure and Artifact Model
 
-The repository exports PNG, JSON, CSV, and Markdown artifacts for every major sweep. This manuscript uses the saved figures directly as figure artifacts and the saved JSON/Markdown summaries as the authoritative numerical record.
+The repository now treats JSON, CSV, and Markdown files in `results/` as the committed numerical record. PNG plots are reproducible build outputs and are intentionally ignored by version control. The pinned public figure is the compact SVG summary panel in `docs/figures/fixed_n_summary_panel.svg`, which summarizes the fixed-\(n=2\) process-fidelity result across Aer and hardware.
 
-![Figure 1](../results/fixed_n2/markovian_n2_leakage.png)
+![Figure 1](figures/fixed_n_summary_panel.svg)
 
-**Figure 1.** Theory-lane leakage versus delay for the fixed-\(n=2\) Markovian baseline. The effective model produces leakage for \(d<2^n\) only because an explicit depolarizing/codespace-mixing term is added; the \(d=4\) curve is structurally pinned to zero because no leakage subspace exists.
-
-![Figure 2](../results/fixed_n2/aer_fixed_n2_fidelity.png)
-
-**Figure 2.** Aer circuit-lane fidelity versus delay for \(d=2,3,4\) at fixed \(n=2\). The circuit-faithful lane shows a clear and monotone dimension ordering \(d=2 > d=3 > d=4\) across the full \(0\)–\(8192\) dt grid.
-
-![Figure 3](../results/hardware/ibm_fez_fixed_n2_delay0_64_128_live_fidelity.png)
-
-**Figure 3.** Live hardware state-fidelity sweep on `ibm_fez` for fixed \(n=2\), delays \(0,64,128\) dt. The short hardware grid is visibly noisier than the Aer grid because the experiment uses only \(256\) shots per circuit and only three delay points.
-
-![Figure 4](../results/non_markovian/random_telegraph_blp_n2_blp.png)
-
-**Figure 4.** Random-telegraph BLP scan at fixed \(n=2\). For all \(d \in \{2,3,4\}\), the BLP measure decreases monotonically with switching probability, as expected for progressively shorter correlation time.
+**Figure 1.** Fixed-\(n=2\) channel-deformation summary. The figure highlights the central result used by the current repository identity: full occupancy \(d=4\) has structurally zero computational-basis leakage but still shows lower process fidelity than the partially occupied \(d=3\) logical channel in the saved Aer and `ibm_fez` hardware comparisons.
 
 ## V. Implementation
 
 ### A. Software Stack
 
-The repository is implemented in Python and distributed as the `teleportdim` package [Listing 1]. The package metadata requires Python \(\ge 3.10\), while the validated environment used for the final repository pass employed Python 3.13 and the package versions archived in `requirements-lock.txt`: Qiskit 2.3.0, Qiskit Aer 0.17.2, Qiskit IBM Runtime 0.46.1, NumPy 2.3.5, Matplotlib 3.10.6, and PyTest 8.4.2 [33]–[35]. A final repository validation executed the complete test suite with result `82 passed, 1 skipped` and 85% coverage, establishing that the draft is paired with a functioning and reproducible codebase.
+The repository is implemented in Python and distributed as the `teleportdim` package [Listing 1]. The package metadata requires Python \(\ge 3.10\), while the validated environment used for the final repository pass employed Python 3.13 and the package versions archived in `requirements-lock.txt`: Qiskit 2.3.0, Qiskit Aer 0.17.2, Qiskit IBM Runtime 0.46.1, NumPy 2.3.5, Matplotlib 3.10.6, and PyTest 8.4.2 [33]–[35]. A final repository validation executed the complete test suite with result `97 passed, 1 skipped` and 85% coverage, establishing that the draft is paired with a functioning and reproducible codebase.
 
 The implementation is physically split according to the protocol boundaries used throughout the manuscript: `config`, `encoding`, `states`, `metrics`, `postprocess`, `tomography`, `process`, `statistics`, `simulation`, `circuits`, `hardware`, `aer`, `reports`, `sweeps`, and `cli`. The package root re-exports the stable public API for backwards compatibility.
 

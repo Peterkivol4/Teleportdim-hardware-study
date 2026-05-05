@@ -2,7 +2,7 @@ PYTHON ?= python3
 MPLCONFIGDIR ?= /tmp/mpl
 CLI = MPLCONFIGDIR=$(MPLCONFIGDIR) PYTHONPATH=src $(PYTHON) -m teleportdim
 
-.PHONY: theory nonmarkovian nonmarkovian-calibration aer figures test hardware-prelim hardware-live hardware-process-live three-lane-report
+.PHONY: theory nonmarkovian nonmarkovian-calibration channel-body body-fingerprint aer figures test hardware-prelim hardware-live hardware-process-live three-lane-report
 
 theory:
 	$(CLI) markovian-fixed-n-sweep --n-values 2 --delays 0,2048,4096,8192 --t1 540540 --t2 360360 --t-dep 360360 --bootstrap-samples 200 --confidence-level 0.95 --output-stem results/fixed_n2/markovian_n2
@@ -13,6 +13,12 @@ nonmarkovian:
 
 nonmarkovian-calibration:
 	$(CLI) calibrate-random-telegraph --input-json results/hardware/ibm_fez_process_d3_n2_delay0_64_128.json --dimension 3 --n-physical 2 --metric process_fidelity --dt-ns-per-step 4.0 --fit-mode first_nonzero --output-stem results/non_markovian/ibm_fez_rtn_calibration_d3_n2
+
+channel-body:
+	$(CLI) channel-body-sweep --n-values 2 --dimensions 2,3,4 --bodies ideal,dephasing,amplitude_damping,leakage_mixing,random_telegraph,coherent_z_drift --strengths 0,0.001,0.005,0.01 --delays 0,64,128 --shots 4096 --samples 1024 --output-stem results/channel_body/n2_body_sweep
+
+body-fingerprint:
+	$(CLI) compare-body-fingerprints --input-json results/channel_body/n2_body_sweep.json --hardware-json results/hardware/ibm_fez_process_fixed_n2_delay0_64_128_compare.json --metrics process_fidelity,average_gate_fidelity,leakage,in_subspace_fidelity,anisotropy,nonunitality --output-stem results/channel_body/ibm_fez_body_match
 
 hardware-prelim:
 	$(CLI) hardware-delay-sweep --dimension 2 --n-physical 2 --backend-name ibm_fez --shots 256 --delays 0 --output-stem results/hardware/ibm_fez_d2_n2_delay0
